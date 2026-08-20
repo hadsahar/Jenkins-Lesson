@@ -30,5 +30,5 @@ except Exception as e:
     sys.exit(5)
 
 print(f"The word '{word}' was not found in the file '{file}'.", file=sys.stderr)
-sys.exit(5)
+sys.exit(6)
         
