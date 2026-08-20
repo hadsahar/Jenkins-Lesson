@@ -1,0 +1,5 @@
+build-info.txt
+app.txt
+deploy/
+.env
+__pycache__/
