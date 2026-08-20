@@ -39,10 +39,10 @@ pipeline{
                         stage('File Stage') {
                             steps {
                                 sh '''
-                                    if [ -f ${FILE_TO_TEST} ]; then
-                                        echo "File ${FILE_TO_TEST} exists."
+                                    if [ -f app.txt ]; then
+                                        echo "File app.txt exists."
                                     else
-                                        echo "ERROR: File ${FILE_TO_TEST} does not exist."
+                                        echo "ERROR: File app.txt does not exist."
                                         exit 1
                                     fi
                                 '''
