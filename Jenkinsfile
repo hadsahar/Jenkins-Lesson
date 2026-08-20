@@ -18,4 +18,17 @@ pipeline{
             }
         }
     }
+    post {
+        always {
+            echo '====== Cleaning Workspace ======'
+            cleanWs()
+        }
+        success {
+            echo 'This will run only if successful'
+        }
+        failure {
+            echo 'This will run only if failed'
+        }
+    }
+
 }
