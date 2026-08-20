@@ -12,6 +12,8 @@ pipeline{
         stage('Build') {
             steps {
                 echo '====== Build Stage ======'
+                sh 'echo "Jenkins Task <<Build stage>>" > app.txt'
+                sh 'cat app.txt'
                 sh '''
                 {
                     echo "APP_NAME=${APP_NAME}"
@@ -22,8 +24,7 @@ pipeline{
                 cat ${BUILD_INFO_FILE}
                 '''
                 sh 'echo "The repo path is: DOCKER_REPO=${DOCKER_REPO}"'
-                sh 'echo "Jenkins Task <<Build stage>>" > app.txt'
-                sh 'cat app.txt'
+
             }
         }
         stage('Test') {
