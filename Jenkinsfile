@@ -3,27 +3,55 @@ pipeline{
 
     environment {
         APP_VERSION = '1.0'
-        APP_NAME = 'MyApp'
-        DOCKER_REPO = 'hadsahar/${APP_NAME}'
+        APP_NAME = 'myapp'
+        DOCKER_REPO = "hadsahar/${APP_NAME}"
+        BUILD_INFO_FILE = 'build_info.txt'
+        FILE_TO_TEST = "${BUILD_INFO_FILE}"
     }
     stages {
         stage('Build') {
             steps {
                 echo '====== Build Stage ======'
-                sh 'echo "Jenkins Task <<Build stage>>" > app.txt'
-                sh 'cat app.txt' 
-                sh 'echo "The App version is ${APP_VERSION}"'
-                sh 'echo "APP_NAME=${APP_NAME}"'
+                sh '''
+                {
+                    echo "APP_NAME=${APP_NAME}"
+                    echo "APP_VERSION=${APP_VERSION}"
+                    echo "BUILD_NUMBER=${BUILD_NUMBER}"
+                    echo "BUILD_DATE=$(date -u +%Y-%m-%d_%H-%M-%S)"
+                } > ${BUILD_INFO_FILE}
+                cat ${BUILD_INFO_FILE}
+                '''
                 sh 'echo "The repo path is: DOCKER_REPO=${DOCKER_REPO}"'
             }
         }
         stage('Test') {
-            steps {
-                echo '====== Test Stage ======'
-                sh 'echo "Checking if the file exists"'
-                sh 'test -f app.txt && echo "File exists" || echo "File does not exist"'
-                sh 'echo "The pipeline name is ${JOB_NAME}"'
-                sh 'echo "The build number is ${BUILD_NUMBER}"'
+            stages{
+                stage('Test Init') {
+                    steps {
+                        echo '====== Test Stage ======'
+                    }
+                }
+                stage('Run Tests') {
+                    parallel {
+                        stage('File Stage') {
+                            steps {
+                                sh '''
+                                    if [ -f ${FILE_TO_TEST} ]; then
+                                        echo "File ${FILE_TO_TEST} exists."
+                                    else
+                                        echo "ERROR: File ${FILE_TO_TEST} does not exist."
+                                        exit 1
+                                    fi
+                                '''
+                            }
+                        }
+                        stage('Build Info Stage') {
+                            steps {
+                                sh 'python3 test.py myapp'
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('Deploy') {
